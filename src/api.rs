@@ -409,3 +409,39 @@ impl IntoResponse for IndexifyAPIError {
         (self.status_code, self.message).into_response()
     }
 }
+
+#[derive(Debug, Serialize, Deserialize, Clone, EnumString)]
+pub enum FeatureType {
+    #[strum(serialize = "embedding")]
+    Embedding,
+    #[strum(serialize = "ner")]
+    NamedEntity,
+    #[strum(serialize = "metadata")]
+    Metadata,
+    #[strum(serialize = "unknown")]
+    Unknown,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct Feature {
+    pub feature_type: FeatureType,
+    pub name: String,
+    pub data: serde_json::Value,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Content {
+    pub content_type: String,
+    pub source: Vec<u8>,
+    pub feature: Option<Feature>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct ExtractRequest {
+    pub content: Content,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct ExtractResponse {
+    pub content: Vec<Content>,
+}
